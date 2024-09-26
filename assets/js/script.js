@@ -27,6 +27,59 @@ bgBoard.onload = () => {
   bgBoard.isReady = true;
 };
 
+const red = new Image();
+red.src = "/assets/img/red.png";
+const yellow = new Image();
+yellow.src = "/assets/img/yellow.png";
+const orange = new Image();
+orange.src = "/assets/img/orange.png";
+const green = new Image();
+green.src = "/assets/img/green.png";
+const purple = new Image();
+purple.src = "/assets/img/purple.png";
+const blue = new Image();
+blue.src = "/assets/img/blue.png";
+
+const audioRotate = new Audio();
+audioRotate.src = "/assets/audio/rotate.wav";
+const audioDrop = new Audio();
+audioDrop.src = "/assets/audio/drop.wav";
+const audioJewels = new Audio();
+audioJewels.src = "/assets/audio/jewels.wav";
+const audioGameOver = new Audio();
+audioGameOver.src = "/assets/audio/gameover.mp3";
+const audio = new Audio();
+audio.src = "/assets/audio/clotho.flac";
+audio.loop = true;
+
+const COLS = 6; 
+const ROWS = 13; 
+const TILE_SIZE = 16 * 3; 
+const colors = [red, yellow, orange, green, purple, blue];
+
+let fallingColumn = generateNewColumn(); 
+let nextColumn = generateNewColumn();
+let columnYPosition = TILE_SIZE * -3; 
+let columnXPosition = TILE_SIZE * 3; 
+let isColumnFalling = true; 
+let fixedTiles = [];
+
+let currentInterval;
+
+let originalSpeed = 500; 
+let fastSpeed = 30; 
+let isFallingFast = false;
+
+let score = 0;
+let level = 0;
+
+let isGameStarted = false;
+let isGamePaused = false; 
+
+let comboCount = 0; 
+let comboDelay = 900; 
+let lastLevel = 0;
+
 function drawBoard() {
   if (bgBoard.isReady) {
     ctx.drawImage(bgBoard, 0, 0, canvas.width, canvas.height);
@@ -58,42 +111,40 @@ function drawNextColumn() {
   }
 }
 
-const audioRotate = new Audio();
-audioRotate.src = "/assets/audio/rotate.wav";
-const audioDrop = new Audio();
-audioDrop.src = "/assets/audio/drop.wav";
-const audioJewels = new Audio();
-audioJewels.src = "/assets/audio/jewels.wav";
-const audioGameOver = new Audio();
-audioGameOver.src = "/assets/audio/gameover.mp3";
-const audio = new Audio();
-audio.src = "/assets/audio/clotho.flac";
-
 function playAudio() {
-    audio.play();
+  audio.play();
 }
 
-audio.addEventListener("canplaythrough", () => {
-  playAudio();
-});
+function drawInitialScreen() {
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "yellow";
+  ctx.font = "32px 'Press Start 2P'";
+  ctx.textAlign = "center";
+  ctx.fillText("COLUMNS", canvas.width / 2, canvas.height / 2 -200); 
+  ctx.font = "17px Arial";
+  ctx.fillStyle = "white";
+  ctx.fillText("Similar to Tetris, the objective is", canvas.width / 2, canvas.height / 2 - 100);
+  ctx.fillText("to align falling blocks and match", canvas.width / 2, canvas.height / 2 - 75);
+  ctx.fillText("3 or more gems of the same color,", canvas.width / 2, canvas.height / 2 - 50);
+  ctx.fillText("either vertically, horizontally or", canvas.width / 2, canvas.height / 2 - 25); 
+  ctx.fillText("diagonally.", canvas.width / 2, canvas.height / 2);
+  ctx.font = "24px Arial";
+  ctx.fillStyle = "yellow";
+  ctx.fillText("Press [Space] to Play", canvas.width / 2, canvas.height - 100); 
+}
 
-const red = new Image();
-red.src = "/assets/img/red.png";
-const yellow = new Image();
-yellow.src = "/assets/img/yellow.png";
-const orange = new Image();
-orange.src = "/assets/img/orange.png";
-const green = new Image();
-green.src = "/assets/img/green.png";
-const purple = new Image();
-purple.src = "/assets/img/purple.png";
-const blue = new Image();
-blue.src = "/assets/img/blue.png";
-
-const COLS = 6; 
-const ROWS = 13; 
-const TILE_SIZE = 16 * 3; 
-const colors = [red, yellow, orange, green, purple, blue];
+function drawPauseScreen() {
+  ctx.fillStyle = "yellow";
+  ctx.font = "32px 'Press Start 2P'";
+  ctx.textAlign = "center";
+  ctx.fillText("COLUMNS", canvas.width / 2, canvas.height / 2 -200); 
+  ctx.font = "25px 'Press Start 2P'";
+  ctx.fillStyle = "white";
+  ctx.fillText("PAUSE", canvas.width / 2, canvas.height / 2);
+  ctx.font = "24px Arial";
+  ctx.fillText("Press [Space] to Play", canvas.width / 2, canvas.height - 100); 
+}
 
 function generateNewColumn() {
   return [
@@ -103,32 +154,15 @@ function generateNewColumn() {
   ];
 }
 
-let fallingColumn = generateNewColumn(); 
-let nextColumn = generateNewColumn();
-let columnYPosition = TILE_SIZE * -3; 
-let columnXPosition = TILE_SIZE * 3; 
-let isColumnFalling = true; 
-let fixedTiles = [];
-
-let currentInterval;
-
-let originalSpeed = 500; 
-let fastSpeed = 30; 
-let isFallingFast = false;
-
-let score = 0;
-let level = 0;
-
 function resetGame() {
-  audio.play();
   score = 0;
   level = 0;
   originalSpeed = 500;
   fallingColumn = generateNewColumn(); 
   columnYPosition = TILE_SIZE * -3; 
   columnXPosition = TILE_SIZE * 3; 
-  isColumnFalling = true; 
   fixedTiles = [];
+  isGameStarted = false;
 }
 
 function drawFallingColumnAt(yPosition, xPosition) {
@@ -175,7 +209,22 @@ function checkGameOver() {
   return false;
 }
 
+function rotateColumn() { 
+  audioRotate.play();
+  const top = fallingColumn.pop(); 
+  fallingColumn.unshift(top); 
+} 
+
 document.addEventListener('keydown', (event) => {
+  
+  if (!isGameStarted && event.key === ' ') {
+    isGameStarted = true;
+    playAudio();
+    isColumnFalling = true;
+    startFalling(originalSpeed);
+    return;
+  }
+
   if (!isColumnFalling) return;
 
   switch (event.key) {
@@ -198,8 +247,7 @@ document.addEventListener('keydown', (event) => {
       break;
 
     case 'ArrowUp':
-      audioRotate.play();
-      rotateColumn();
+      if (isGameStarted) rotateColumn();
       break;
 
     case 'ArrowDown':
@@ -207,6 +255,10 @@ document.addEventListener('keydown', (event) => {
         isFallingFast = true;
         startFalling(fastSpeed);
       }
+      break;
+
+    case ' ':
+      isGamePaused = !isGamePaused;
       break;
   }
 });
@@ -219,15 +271,6 @@ document.addEventListener('keyup', (event) => {
     }
   }
 });
-
-function rotateColumn() { 
-  const top = fallingColumn.pop(); 
-  fallingColumn.unshift(top); 
-}
-
-let comboCount = 0; 
-let comboDelay = 900; 
-let lastLevel = 0;
 
 function processTileCombinations() {
   let tilesToRemove = new Set();
@@ -424,6 +467,15 @@ function handleColumnFixed() {
 }
 
 function update() {
+  if (!isGameStarted) {
+    drawInitialScreen(); 
+    return;
+  }
+
+  if (isGamePaused) {
+    drawPauseScreen();
+    return;
+  }
   // Borrar
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctxScore.clearRect(0, 0, canvasScore.width, canvasScore.height);
