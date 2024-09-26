@@ -39,14 +39,19 @@ blue.src = "/assets/img/blue.png";
 
 const audioRotate = new Audio();
 audioRotate.src = "/assets/audio/rotate.wav";
+audioRotate.volume = 0.5;
 const audioDrop = new Audio();
 audioDrop.src = "/assets/audio/drop.wav";
 const audioJewels = new Audio();
 audioJewels.src = "/assets/audio/jewels.wav";
+const audioLevelUp = new Audio();
+audioLevelUp.src = "/assets/audio/levelup.mp3";
 const audioGameOver = new Audio();
+audioGameOver.volume = 0.5;
 audioGameOver.src = "/assets/audio/gameover.mp3";
 const audio = new Audio();
 audio.src = "/assets/audio/clotho.flac";
+audio.volume = 0.5;
 audio.loop = true;
 
 const COLS = 6; 
@@ -117,10 +122,10 @@ function drawInitialScreen() {
   ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "yellow";
-  ctx.font = "32px 'Press Start 2P'";
+  ctx.font = "32px 'Press Start 2P";
   ctx.textAlign = "center";
   ctx.fillText("COLUMNS", canvas.width / 2, canvas.height / 2 -200); 
-  ctx.font = "17px Arial";
+  ctx.font = "17px Roboto";
   ctx.fillStyle = "white";
   ctx.fillText("Similar to Tetris, the objective is", canvas.width / 2, canvas.height / 2 - 100);
   ctx.fillText("to align falling blocks and match", canvas.width / 2, canvas.height / 2 - 75);
@@ -400,6 +405,7 @@ function processTileCombinations() {
 
     // Verifica si el score alcanzó un múltiplo de 500 para actualizar el nivel
     if (score >= 500 * (lastLevel + 1)) {
+      audioLevelUp.play();
       level++; 
       lastLevel = level; 
       drawLevel(); 
