@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Columns Game</title>
   <link rel="stylesheet" href="/assets/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 </head>
 <body>
   <div id="game-container">
@@ -12,16 +15,28 @@
       <canvas id="gameCanvas"></canvas>
     </div>
     <div id="info">
-      <h3>NEXT</h3>
-      <canvas id="nextColumn"></canvas>
-      <h3>SCORE</h3>
-      <canvas id="score"></canvas>
-      <h3>LEVEL</h3>
-      <canvas id="level"></canvas>
+      <div>
+        <h3>NEXT</h3>
+        <canvas id="nextColumn"></canvas>
+      </div>
+      <div>
+        <h3>SCORE</h3>
+        <canvas id="score"></canvas>
+      </div>
+      <div>
+        <h3>LEVEL</h3>
+        <canvas id="level"></canvas>
+      </div>
+      <div id="controls">
+        <h3>CONTROLS</h3>
+        <p>move: ← ↓ →</p>
+        <p>rotate: ↑</p>
+        <p>pause: [space]</p>
+      </div>
     </div>
   </div>
   <footer>
-    <p>Created by Alejandro Martínez</p>
+    <p>Developed by Alejandro Martínez</p>
     <a href="https://www.linkedin.com/in/alejandromartinez-webdeveloper/">LinkedIn</a>
     <a href="https://github.com/alexmvarela">GitHub</a>
   </footer>
