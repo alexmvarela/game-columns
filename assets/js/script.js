@@ -7,19 +7,16 @@ const canvasNext = document.getElementById("nextColumn");
 canvasNext.width = 16 * 3;
 canvasNext.height = 16 * 3 * 3;
 const ctxNext = canvasNext.getContext("2d");
-ctxNext.fillRect(0, 0, canvasNext.width, canvasNext.height);
 
 const canvasScore = document.getElementById("score");
 canvasScore.width = 16 * 3 * 3;
 canvasScore.height = 16 * 3;
 const ctxScore = canvasScore.getContext("2d");
-ctxScore.fillRect(0, 0, canvasScore.width, canvasScore.height);
 
 const canvasLevel = document.getElementById("level");
 canvasLevel.width = 16 * 3 * 3;
 canvasLevel.height = 16 * 3;
 const ctxLevel = canvasLevel.getContext("2d");
-ctxLevel.fillRect(0, 0, canvasLevel.width, canvasLevel.height);
 
 const bgBoard = new Image();
 bgBoard.src = "/assets/img/table.png"; 
@@ -74,7 +71,8 @@ let score = 0;
 let level = 0;
 
 let isGameStarted = false;
-let isGamePaused = false; 
+let isGamePaused = false;
+let isGameOver = false; 
 
 let comboCount = 0; 
 let comboDelay = 900; 
@@ -87,7 +85,7 @@ function drawBoard() {
 }
 
 function drawScore() {
-  ctxScore.fillStyle = "black";
+  ctxScore.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctxScore.fillRect(0, 0, canvasScore.width, canvasScore.height);
   ctxScore.fillStyle = 'white';
   ctxScore.font = "30px Arial"; 
@@ -95,7 +93,7 @@ function drawScore() {
 }
 
 function drawLevel() {
-  ctxLevel.fillStyle = "black";
+  ctxLevel.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctxLevel.fillRect(0, 0, canvasLevel.width, canvasLevel.height); 
   ctxLevel.fillStyle = "white";
   ctxLevel.font = "30px Arial";
@@ -103,7 +101,7 @@ function drawLevel() {
 }
 
 function drawNextColumn() {
-  ctxNext.fillStyle = "black";
+  ctxNext.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctxNext.fillRect(0, 0, canvasNext.width, canvasNext.height);
   for (let i = 0; i < nextColumn.length; i++) {
     ctxNext.drawImage(colors[nextColumn[i]], 0, i * TILE_SIZE, TILE_SIZE, TILE_SIZE);
@@ -116,7 +114,7 @@ function playAudio() {
 }
 
 function drawInitialScreen() {
-  ctx.fillStyle = "black";
+  ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "yellow";
   ctx.font = "32px 'Press Start 2P'";
@@ -129,9 +127,10 @@ function drawInitialScreen() {
   ctx.fillText("3 or more gems of the same color,", canvas.width / 2, canvas.height / 2 - 50);
   ctx.fillText("either vertically, horizontally or", canvas.width / 2, canvas.height / 2 - 25); 
   ctx.fillText("diagonally.", canvas.width / 2, canvas.height / 2);
-  ctx.font = "24px Arial";
+  ctx.font = "18px 'Press Start 2P'";
   ctx.fillStyle = "yellow";
-  ctx.fillText("Press [Space] to Play", canvas.width / 2, canvas.height - 100); 
+  ctx.fillText("Press [Space]", canvas.width / 2, canvas.height - 100); 
+  ctx.fillText("to Play", canvas.width / 2, canvas.height - 70);
 }
 
 function drawPauseScreen() {
@@ -142,8 +141,24 @@ function drawPauseScreen() {
   ctx.font = "25px 'Press Start 2P'";
   ctx.fillStyle = "white";
   ctx.fillText("PAUSE", canvas.width / 2, canvas.height / 2);
-  ctx.font = "24px Arial";
-  ctx.fillText("Press [Space] to Play", canvas.width / 2, canvas.height - 100); 
+  ctx.font = "18px 'Press Start 2P'";
+  ctx.fillStyle = "yellow";
+  ctx.fillText("Press [Space]", canvas.width / 2, canvas.height - 100);
+  ctx.fillText("to play", canvas.width / 2, canvas.height - 70);
+}
+
+function drawGameOverScreen() {
+  ctx.fillStyle = "yellow";
+  ctx.font = "32px 'Press Start 2P'";
+  ctx.textAlign = "center";
+  ctx.fillText("COLUMNS", canvas.width / 2, canvas.height / 2 -200); 
+  ctx.font = "25px 'Press Start 2P'";
+  ctx.fillStyle = "white";
+  ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2);
+  ctx.font = "18px 'Press Start 2P'";
+  ctx.fillStyle = "yellow";
+  ctx.fillText("Press [Space]", canvas.width / 2, canvas.height - 100);
+  ctx.fillText("to restart", canvas.width / 2, canvas.height - 70);  
 }
 
 function generateNewColumn() {
@@ -159,6 +174,7 @@ function resetGame() {
   level = 0;
   originalSpeed = 500;
   fallingColumn = generateNewColumn(); 
+  nextColumn = generateNewColumn();
   columnYPosition = TILE_SIZE * -3; 
   columnXPosition = TILE_SIZE * 3; 
   fixedTiles = [];
@@ -217,6 +233,13 @@ function rotateColumn() {
 
 document.addEventListener('keydown', (event) => {
   
+  if (isGameOver && event.key === ' ') {
+    isGameOver = false;
+    audioGameOver.pause();
+    audioGameOver.currentTime = 0;
+    return;
+  }
+
   if (!isGameStarted && event.key === ' ') {
     isGameStarted = true;
     playAudio();
@@ -229,7 +252,7 @@ document.addEventListener('keydown', (event) => {
 
   switch (event.key) {
     case 'ArrowLeft':
-      if (columnXPosition > 0) {
+      if (columnXPosition > 0 && !isGamePaused) {
         columnXPosition -= TILE_SIZE;
         if (checkCollision()?.left) {
           columnXPosition += TILE_SIZE; 
@@ -238,7 +261,7 @@ document.addEventListener('keydown', (event) => {
       break;
 
     case 'ArrowRight':
-      if (columnXPosition + TILE_SIZE < canvas.width) {
+      if (columnXPosition + TILE_SIZE < canvas.width && !isGamePaused) {
         columnXPosition += TILE_SIZE;
         if (checkCollision()?.right) {
           columnXPosition -= TILE_SIZE; 
@@ -247,18 +270,20 @@ document.addEventListener('keydown', (event) => {
       break;
 
     case 'ArrowUp':
-      if (isGameStarted) rotateColumn();
+      if (isGameStarted && !isGamePaused) rotateColumn();
       break;
 
     case 'ArrowDown':
-      if (!isFallingFast) {
+      if (!isFallingFast && !isGamePaused) {
         isFallingFast = true;
         startFalling(fastSpeed);
       }
       break;
 
     case ' ':
-      isGamePaused = !isGamePaused;
+      if (isGameStarted) {
+        isGamePaused = !isGamePaused;
+      }
       break;
   }
 });
@@ -443,10 +468,11 @@ function handleColumnFixed() {
   // Verificar si alguna columna fija ha llegado a la parte superior del tablero (Game Over)
   setTimeout(() => {
     if (checkGameOver()) {
+      isGameOver = true;
+      isGameStarted = false;
       audio.pause();
       audio.currentTime = 0;
       audioGameOver.play();
-      alert("Game Over!");
       resetGame(); 
     } else {
       // Primero actualizar la columna actual a la siguiente
@@ -466,9 +492,29 @@ function handleColumnFixed() {
   }, 1500);
 }
 
+function startFalling(speed) {
+  clearInterval(currentInterval); 
+  currentInterval = setInterval(update, speed); 
+}
+
 function update() {
+  if (isGameOver) {
+    drawGameOverScreen();
+    return;
+  }
+  
   if (!isGameStarted) {
-    drawInitialScreen(); 
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawInitialScreen();
+    ctxScore.clearRect(0, 0, canvasScore.width, canvasScore.height);
+    ctxLevel.clearRect(0, 0, canvasLevel.width, canvasLevel.height);
+    ctxNext.clearRect(0, 0, canvasNext.width, canvasNext.height);
+    ctxNext.fillStyle = "rgba(0, 0, 0, 0.7)";
+    ctxNext.fillRect(0, 0, canvasNext.width, canvasNext.height);
+    ctxScore.fillStyle = "rgba(0, 0, 0, 0.7)";
+    ctxScore.fillRect(0, 0, canvasScore.width, canvasScore.height);
+    ctxLevel.fillStyle = "rgba(0, 0, 0, 0.7)";
+    ctxLevel.fillRect(0, 0, canvasLevel.width, canvasLevel.height); 
     return;
   }
 
@@ -522,9 +568,4 @@ function update() {
   }
 }
 
-function startFalling(speed) {
-  clearInterval(currentInterval); 
-  currentInterval = setInterval(update, speed); 
-}
-
-startFalling(originalSpeed);
+update();
