@@ -228,8 +228,8 @@ function checkCollision() {
 
 function checkGameOver() {
   for (let i = 0; i < fixedTiles.length; i++) {
-    const row = fixedTiles[i].yPosition / TILE_SIZE;
-    if (row < 3) {
+    const tile = fixedTiles[i];
+    if (tile.yPosition < 0) {
       return true;
     }
   }
@@ -585,6 +585,5 @@ function update() {
     }
   }
 }
-
 
 update();
