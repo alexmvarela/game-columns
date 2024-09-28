@@ -119,27 +119,33 @@ function playAudio() {
 }
 
 function drawInitialScreen() {
-  ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "yellow";
-  ctx.font = "32px 'Press Start 2P";
-  ctx.textAlign = "center";
-  ctx.fillText("COLUMNS", canvas.width / 2, canvas.height / 2 -200); 
-  ctx.font = "17px Roboto";
-  ctx.fillStyle = "white";
-  ctx.fillText("Similar to Tetris, the objective is", canvas.width / 2, canvas.height / 2 - 100);
-  ctx.fillText("to align falling blocks and match", canvas.width / 2, canvas.height / 2 - 75);
-  ctx.fillText("3 or more gems of the same color,", canvas.width / 2, canvas.height / 2 - 50);
-  ctx.fillText("either vertically, horizontally or", canvas.width / 2, canvas.height / 2 - 25); 
-  ctx.fillText("diagonally.", canvas.width / 2, canvas.height / 2);
-  ctx.font = "18px 'Press Start 2P'";
-  ctx.fillStyle = "yellow";
-  ctx.fillText("Press [Space]", canvas.width / 2, canvas.height - 100); 
-  ctx.fillText("to Play", canvas.width / 2, canvas.height - 70);
+  const font = new FontFaceObserver('Press Start 2P');
+
+  font.load().then(() => {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "yellow";
+    ctx.font = "32px 'Press Start 2P'";
+    ctx.textAlign = "center";
+    ctx.fillText("COLUMNS", canvas.width / 2, canvas.height / 2 -200); 
+    ctx.font = "17px Roboto";
+    ctx.fillStyle = "white";
+    ctx.fillText("Similar to Tetris, the objective is", canvas.width / 2, canvas.height / 2 - 100);
+    ctx.fillText("to align falling blocks and match", canvas.width / 2, canvas.height / 2 - 75);
+    ctx.fillText("3 or more gems of the same color,", canvas.width / 2, canvas.height / 2 - 50);
+    ctx.fillText("either vertically, horizontally or", canvas.width / 2, canvas.height / 2 - 25); 
+    ctx.fillText("diagonally.", canvas.width / 2, canvas.height / 2);
+    ctx.font = "18px 'Press Start 2P'";
+    ctx.fillStyle = "yellow";
+    ctx.fillText("Press [Space]", canvas.width / 2, canvas.height - 100); 
+    ctx.fillText("to Play", canvas.width / 2, canvas.height - 70);
+  });
 }
 
 function drawPauseScreen() {
-  ctx.fillStyle = "yellow";
+  ctx.fillStyle = "rgba(0, 0, 0, 0.3)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "yellow"
   ctx.font = "32px 'Press Start 2P'";
   ctx.textAlign = "center";
   ctx.fillText("COLUMNS", canvas.width / 2, canvas.height / 2 -200); 
@@ -149,7 +155,7 @@ function drawPauseScreen() {
   ctx.font = "18px 'Press Start 2P'";
   ctx.fillStyle = "yellow";
   ctx.fillText("Press [Space]", canvas.width / 2, canvas.height - 100);
-  ctx.fillText("to play", canvas.width / 2, canvas.height - 70);
+  ctx.fillText("to resume", canvas.width / 2, canvas.height - 70);
 }
 
 function drawGameOverScreen() {
@@ -505,6 +511,8 @@ function startFalling(speed) {
 
 function update() {
   if (isGameOver) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBoard();
     drawGameOverScreen();
     return;
   }
@@ -525,6 +533,10 @@ function update() {
   }
 
   if (isGamePaused) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawBoard();
+    drawFixedTiles();
+    drawFallingColumnAt(columnYPosition, columnXPosition);
     drawPauseScreen();
     return;
   }
