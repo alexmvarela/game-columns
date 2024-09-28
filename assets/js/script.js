@@ -317,10 +317,13 @@ function processTileCombinations() {
 
   // Llenar la matriz con los colores y posiciones de las tiles fijas
   fixedTiles.forEach(tile => {
-    const row = tile.yPosition / TILE_SIZE;
-    const col = tile.xPosition / TILE_SIZE;
-    board[row][col] = tile;
-  });
+    const row = Math.floor(tile.yPosition / TILE_SIZE);
+    const col = Math.floor(tile.xPosition / TILE_SIZE);
+    if (row >= 0 && row < board.length && col >= 0 && col < board[row].length) {
+        board[row][col] = tile;
+    }
+});
+
 
   // Comprobar combinaciones horizontales
   for (let row = 0; row < ROWS; row++) {
@@ -431,10 +434,6 @@ function processTileCombinations() {
       audioDrop.play(); 
     }
     comboCount = 0;
-    fallingColumn = generateNewColumn();
-    columnYPosition = TILE_SIZE * -3;
-    columnXPosition = TILE_SIZE * 3;
-    isColumnFalling = true;
   }
 }
 
@@ -473,35 +472,31 @@ function handleColumnFixed() {
       xPosition: columnXPosition 
     });
   }
-
   // Procesar eliminaciones y aplicar gravedad
   processTileCombinations();
-
   // Verificar si alguna columna fija ha llegado a la parte superior del tablero (Game Over)
-  setTimeout(() => {
-    if (checkGameOver()) {
-      isGameOver = true;
-      isGameStarted = false;
-      audio.pause();
-      audio.currentTime = 0;
-      audioGameOver.play();
-      resetGame(); 
-    } else {
-      // Primero actualizar la columna actual a la siguiente
-      fallingColumn = [...nextColumn];
-      
-      // Generar una nueva columna para el "Next"
-      nextColumn = generateNewColumn();
+  if (checkGameOver()) {
+    isGameOver = true;
+    isGameStarted = false;
+    audio.pause();
+    audio.currentTime = 0;
+    audioGameOver.play();
+    resetGame(); 
+  } else {
+    // Primero actualizar la columna actual a la siguiente
+    fallingColumn = [...nextColumn];
+    
+    // Generar una nueva columna para el "Next"
+    nextColumn = generateNewColumn();
 
-      // Redibujar la próxima columna en el canvas Next
-      drawNextColumn(); 
+    // Redibujar la próxima columna en el canvas Next
+    drawNextColumn(); 
 
-      // Redibujar la nueva columna actual
-      columnYPosition = TILE_SIZE * -3; 
-      columnXPosition = TILE_SIZE * 3;
-      isColumnFalling = true;
-    }
-  }, 1500);
+    // Redibujar la nueva columna actual
+    columnYPosition = TILE_SIZE * -3; 
+    columnXPosition = TILE_SIZE * 3;
+    isColumnFalling = true;
+  }
 }
 
 function startFalling(speed) {
