@@ -83,6 +83,10 @@ let comboCount = 0;
 let comboDelay = 900; 
 let lastLevel = 0;
 
+function playAudio() {
+  audio.play();
+}
+
 function drawBoard() {
   if (bgBoard.isReady) {
     ctx.drawImage(bgBoard, 0, 0, canvas.width, canvas.height);
@@ -114,10 +118,6 @@ function drawNextColumn() {
   }
 }
 
-function playAudio() {
-  audio.play();
-}
-
 function drawInitialScreen() {
   const font = new FontFaceObserver('Press Start 2P');
 
@@ -137,8 +137,8 @@ function drawInitialScreen() {
     ctx.fillText("diagonally.", canvas.width / 2, canvas.height / 2);
     ctx.font = "18px 'Press Start 2P'";
     ctx.fillStyle = "yellow";
-    ctx.fillText("Press [Space]", canvas.width / 2, canvas.height - 100); 
-    ctx.fillText("to Play", canvas.width / 2, canvas.height - 70);
+    ctx.fillText("PRESS [Space]", canvas.width / 2, canvas.height - 100); 
+    ctx.fillText("TO START", canvas.width / 2, canvas.height - 70);
   });
 }
 
@@ -154,8 +154,8 @@ function drawPauseScreen() {
   ctx.fillText("PAUSE", canvas.width / 2, canvas.height / 2);
   ctx.font = "18px 'Press Start 2P'";
   ctx.fillStyle = "yellow";
-  ctx.fillText("Press [Space]", canvas.width / 2, canvas.height - 100);
-  ctx.fillText("to resume", canvas.width / 2, canvas.height - 70);
+  ctx.fillText("PRESS [Space]", canvas.width / 2, canvas.height - 100);
+  ctx.fillText("TO RESUME", canvas.width / 2, canvas.height - 70);
 }
 
 function drawGameOverScreen() {
@@ -168,8 +168,8 @@ function drawGameOverScreen() {
   ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2);
   ctx.font = "18px 'Press Start 2P'";
   ctx.fillStyle = "yellow";
-  ctx.fillText("Press [Space]", canvas.width / 2, canvas.height - 100);
-  ctx.fillText("to restart", canvas.width / 2, canvas.height - 70);  
+  ctx.fillText("PRESS [Space]", canvas.width / 2, canvas.height - 100);
+  ctx.fillText("TO RESTART", canvas.width / 2, canvas.height - 70);  
 }
 
 function generateNewColumn() {
@@ -294,6 +294,8 @@ document.addEventListener('keydown', (event) => {
     case ' ':
       if (isGameStarted) {
         isGamePaused = !isGamePaused;
+        if (isGamePaused) audio.pause();
+        if (!isGamePaused) audio.play();
       }
       break;
   }
@@ -322,8 +324,7 @@ function processTileCombinations() {
     if (row >= 0 && row < board.length && col >= 0 && col < board[row].length) {
         board[row][col] = tile;
     }
-});
-
+  });
 
   // Comprobar combinaciones horizontales
   for (let row = 0; row < ROWS; row++) {

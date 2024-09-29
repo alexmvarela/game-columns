@@ -2,7 +2,11 @@ body {
     text-align: center;
     font-family: Roboto, Arial, Helvetica, sans-serif;
     background-image: url('/assets/img/bg.jpg');
-    background-size: cover;    
+    background-size: cover;
+    display: flex;    
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
   
 #game-container {
@@ -12,7 +16,7 @@ body {
 }
 
 #info {
-    margin-left: 100px;
+    margin-left: 75px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -33,7 +37,7 @@ h3 {
     width: 144px;
 }
 
-p {
+#controls p {
     text-align: left;
     margin-left: 15px;
 }
@@ -43,17 +47,19 @@ footer {
     justify-content: center;
     align-items: center;
     margin-top: 30px;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding-left: 20px;
 }
 
 footer p {
     text-align: center;
     color: white;
-    margin-right: 30px;
-    background-color: rgba(0, 0, 0, 0.5);
-    padding: 3px 5px;
+    margin-right: 50px;
+    margin-top: 7px;
+    margin-bottom: 7px;
 }
 
 a {
-    color: black;
-    margin-right: 20px;
+    color: white;
+    margin-right: 25px;
 }
