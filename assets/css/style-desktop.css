@@ -1,7 +1,7 @@
 body {
     text-align: center;
     font-family: Roboto, Arial, Helvetica, sans-serif;
-    background-image: url('/assets/img/bg.jpg');
+    background-image: url('../img/bg.jpg');
     background-size: cover;
     display: flex;    
     flex-direction: column;

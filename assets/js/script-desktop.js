@@ -19,38 +19,38 @@ canvasLevel.height = 16 * 3;
 const ctxLevel = canvasLevel.getContext("2d");
 
 const bgBoard = new Image();
-bgBoard.src = "/assets/img/table.png"; 
+bgBoard.src = "assets/img/table.png"; 
 bgBoard.onload = () => {
   bgBoard.isReady = true;
 };
 
 const red = new Image();
-red.src = "/assets/img/red.png";
+red.src = "assets/img/red.png";
 const yellow = new Image();
-yellow.src = "/assets/img/yellow.png";
+yellow.src = "assets/img/yellow.png";
 const orange = new Image();
-orange.src = "/assets/img/orange.png";
+orange.src = "assets/img/orange.png";
 const green = new Image();
-green.src = "/assets/img/green.png";
+green.src = "assets/img/green.png";
 const purple = new Image();
-purple.src = "/assets/img/purple.png";
+purple.src = "assets/img/purple.png";
 const blue = new Image();
-blue.src = "/assets/img/blue.png";
+blue.src = "assets/img/blue.png";
 
 const audioRotate = new Audio();
-audioRotate.src = "/assets/audio/rotate.wav";
+audioRotate.src = "assets/audio/rotate.wav";
 audioRotate.volume = 0.5;
 const audioDrop = new Audio();
-audioDrop.src = "/assets/audio/drop.wav";
+audioDrop.src = "assets/audio/drop.wav";
 const audioJewels = new Audio();
-audioJewels.src = "/assets/audio/jewels.wav";
+audioJewels.src = "assets/audio/jewels.wav";
 const audioLevelUp = new Audio();
-audioLevelUp.src = "/assets/audio/levelup.mp3";
+audioLevelUp.src = "assets/audio/levelup.mp3";
 const audioGameOver = new Audio();
 audioGameOver.volume = 0.5;
-audioGameOver.src = "/assets/audio/gameover.mp3";
+audioGameOver.src = "assets/audio/gameover.mp3";
 const audio = new Audio();
-audio.src = "/assets/audio/clotho.flac";
+audio.src = "assets/audio/clotho.flac";
 audio.volume = 0.5;
 audio.loop = true;
 
@@ -86,6 +86,13 @@ let lastLevel = 0;
 function playAudio() {
   audio.play();
 }
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden' && isGameStarted) {
+    isGamePaused = true;
+    audio.pause();
+  }
+});
 
 function drawBoard() {
   if (bgBoard.isReady) {
@@ -268,6 +275,10 @@ document.addEventListener('keydown', (event) => {
         if (checkCollision()?.left) {
           columnXPosition += TILE_SIZE; 
         }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBoard();
+        drawFixedTiles();
+        drawFallingColumnAt(columnYPosition, columnXPosition);
       }
       break;
 
@@ -277,11 +288,21 @@ document.addEventListener('keydown', (event) => {
         if (checkCollision()?.right) {
           columnXPosition -= TILE_SIZE; 
         }
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBoard();
+        drawFixedTiles();
+        drawFallingColumnAt(columnYPosition, columnXPosition);
       }
       break;
 
     case 'ArrowUp':
-      if (isGameStarted && !isGamePaused) rotateColumn();
+      if (isGameStarted && !isGamePaused) {
+        rotateColumn();
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        drawBoard();
+        drawFixedTiles();
+        drawFallingColumnAt(columnYPosition, columnXPosition);
+      }
       break;
 
     case 'ArrowDown':
@@ -309,6 +330,16 @@ document.addEventListener('keyup', (event) => {
     }
   }
 });
+
+function handleNewColumn() {
+  fallingColumn = [...nextColumn];
+  nextColumn = generateNewColumn();
+  ctxNext.clearRect(0, 0, canvasNext.width, canvasNext.height);
+  drawNextColumn(); 
+  columnYPosition = TILE_SIZE * -3; 
+  columnXPosition = TILE_SIZE * 3;
+  isColumnFalling = true;
+}
 
 function processTileCombinations() {
   let tilesToRemove = new Set();
@@ -435,6 +466,7 @@ function processTileCombinations() {
       audioDrop.play(); 
     }
     comboCount = 0;
+    handleNewColumn();
   }
 }
 
@@ -483,21 +515,7 @@ function handleColumnFixed() {
     audio.currentTime = 0;
     audioGameOver.play();
     resetGame(); 
-  } else {
-    // Primero actualizar la columna actual a la siguiente
-    fallingColumn = [...nextColumn];
-    
-    // Generar una nueva columna para el "Next"
-    nextColumn = generateNewColumn();
-
-    // Redibujar la próxima columna en el canvas Next
-    drawNextColumn(); 
-
-    // Redibujar la nueva columna actual
-    columnYPosition = TILE_SIZE * -3; 
-    columnXPosition = TILE_SIZE * 3;
-    isColumnFalling = true;
-  }
+  } 
 }
 
 function startFalling(speed) {
