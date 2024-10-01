@@ -225,7 +225,7 @@ function drawInitialScreen() {
     ctx.fillText("or diagonally.", canvas.width / 2, canvas.height / 2 + 50);
     ctx.font = "20px 'Roboto'";
     ctx.fillStyle = "yellow";
-    ctx.fillText("TAP  ▶||", canvas.width / 2, canvas.height - 60); 
+    ctx.fillText("TAP  ⏯", canvas.width / 2, canvas.height - 60); 
     ctx.fillText("TO START", canvas.width / 2, canvas.height - 30);
   });
 }
@@ -242,7 +242,7 @@ function drawPauseScreen() {
   ctx.fillText("PAUSE", canvas.width / 2, canvas.height / 2);
   ctx.font = "20px 'Roboto'";
   ctx.fillStyle = "yellow";
-  ctx.fillText("TAP ▶||", canvas.width / 2, canvas.height - 60);
+  ctx.fillText("TAP ⏯", canvas.width / 2, canvas.height - 60);
   ctx.fillText("TO RESUME", canvas.width / 2, canvas.height - 30);
 }
 
@@ -257,7 +257,7 @@ function drawGameOverScreen() {
   ctx.fillText("OVER", canvas.width / 2, canvas.height / 2 + 50);
   ctx.font = "20px 'Roboto'";
   ctx.fillStyle = "yellow";
-  ctx.fillText("TAP ▶||", canvas.width / 2, canvas.height - 60);
+  ctx.fillText("TAP ⏯", canvas.width / 2, canvas.height - 60);
   ctx.fillText("TO RESTART", canvas.width / 2, canvas.height - 30);  
 }
 

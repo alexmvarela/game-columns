@@ -85,14 +85,6 @@ function addStylesAndHTMLToBody() {
           <button id="down"><i class="fa-solid fa-angles-down fa-2xl" style="color: #ffffff;"></i></button>
         </div>
       </div>
-      <footer>
-        <p>Developed by Alex Martínez</p>
-        <div>
-          <a href="https://www.linkedin.com/in/alejandromartinez-webdeveloper/"><i class="fa-brands fa-linkedin fa-xl" style="color: #ffffff;"></i></a>
-          <a href="https://github.com/alexmvarela"><i class="fa-brands fa-github fa-xl" style="color: #ffffff;"></i></a>
-          <a href="https://alexmvarela.github.io/portfolio/"><i class="fa-solid fa-briefcase fa-xl" style="color: #ffffff;"></i></a>
-        </div>
-      </footer>
     `;
     
     document.addEventListener('DOMContentLoaded', () => {
