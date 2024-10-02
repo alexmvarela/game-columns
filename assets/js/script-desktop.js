@@ -234,14 +234,9 @@ function checkCollision() {
 }
 
 function checkGameOver() {
-  for (let i = 0; i < fixedTiles.length; i++) {
-    const tile = fixedTiles[i];
-    if (tile.yPosition < 0) {
-      return true;
-    }
-  }
-  return false;
+  return fixedTiles.some(tile => tile.yPosition < 0);
 }
+
 
 function rotateColumn() { 
   audioRotate.play();
@@ -471,26 +466,46 @@ function processTileCombinations() {
 }
 
 function removeTilesAndApplyGravity(tilesToRemove) {
-  
+  // Eliminar las tiles que están en el conjunto de tiles a remover
   fixedTiles = fixedTiles.filter(tile => !tilesToRemove.has(tile));
+
+  // Crear una matriz vacía para representar el tablero
   const board = Array.from({ length: ROWS }, () => Array(COLS).fill(null));
+
+  // Llenar la matriz con las posiciones de las tiles, ignorando las que tienen posiciones negativas
   fixedTiles.forEach(tile => {
-    const row = tile.yPosition / TILE_SIZE;
-    const col = tile.xPosition / TILE_SIZE;
-    board[row][col] = tile;
+    const row = Math.floor(tile.yPosition / TILE_SIZE);
+    const col = Math.floor(tile.xPosition / TILE_SIZE);
+
+    // Asegurarse de que la fila esté dentro del rango válido del tablero
+    if (row >= 0 && row < ROWS && col >= 0 && col < COLS) {
+      board[row][col] = tile;
+    }
   });
 
   // Aplicar gravedad: hacer que las tiles superiores caigan
   for (let col = 0; col < COLS; col++) {
-    let emptyRow = ROWS - 1;
+    let emptyRow = ROWS - 1;  
 
     for (let row = ROWS - 1; row >= 0; row--) {
-      if (board[row][col]) {
+      if (board[row][col]) {  
         const tile = board[row][col];
+
         if (row !== emptyRow) {
-          tile.yPosition = emptyRow * TILE_SIZE;
+          tile.yPosition = emptyRow * TILE_SIZE; 
         }
-        emptyRow--;
+
+        emptyRow--;  
+      }
+    }
+  }
+
+  // Actualizar el array de fixedTiles con las nuevas posiciones aplicadas tras la gravedad
+  fixedTiles = [];
+  for (let row = 0; row < ROWS; row++) {
+    for (let col = 0; col < COLS; col++) {
+      if (board[row][col]) {
+        fixedTiles.push(board[row][col]); 
       }
     }
   }
