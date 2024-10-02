@@ -238,7 +238,9 @@ function checkGameOver() {
 }
 
 
-function rotateColumn() { 
+function rotateColumn() {
+  audioRotate.pause();
+  audioRotate.currentTime = 0; 
   audioRotate.play();
   const top = fallingColumn.pop(); 
   fallingColumn.unshift(top); 
