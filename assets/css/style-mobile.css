@@ -35,6 +35,10 @@ h3 {
     margin-top: 0;
 }
 
+#nextTitle {
+    padding: 0 5px;
+}
+
 #controls {
     display: flex;
     flex-direction: column;
