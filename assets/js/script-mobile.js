@@ -183,7 +183,7 @@ function drawScore() {
   ctxScore.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctxScore.fillRect(0, 0, canvasScore.width, canvasScore.height);
   ctxScore.fillStyle = 'white';
-  ctxScore.font = "25px Arial"; 
+  ctxScore.font = "25px Roboto"; 
   ctxScore.fillText(score, 10, 25);
 }
 
@@ -191,7 +191,7 @@ function drawLevel() {
   ctxLevel.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctxLevel.fillRect(0, 0, canvasLevel.width, canvasLevel.height); 
   ctxLevel.fillStyle = "white";
-  ctxLevel.font = "25px Arial";
+  ctxLevel.font = "25px Roboto";
   ctxLevel.fillText(level, 10, 25); 
 }
 

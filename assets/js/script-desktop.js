@@ -104,16 +104,16 @@ function drawScore() {
   ctxScore.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctxScore.fillRect(0, 0, canvasScore.width, canvasScore.height);
   ctxScore.fillStyle = 'white';
-  ctxScore.font = "30px Arial"; 
-  ctxScore.fillText(score, 30, 30);
+  ctxScore.font = "1.5rem Roboto"; 
+  ctxScore.fillText(score, 20, 33);
 }
 
 function drawLevel() {
   ctxLevel.fillStyle = "rgba(0, 0, 0, 0.7)";
   ctxLevel.fillRect(0, 0, canvasLevel.width, canvasLevel.height); 
   ctxLevel.fillStyle = "white";
-  ctxLevel.font = "30px Arial";
-  ctxLevel.fillText(level, 30, 30); 
+  ctxLevel.font = "1.5rem Roboto";
+  ctxLevel.fillText(level, 20, 33); 
 }
 
 function drawNextColumn() {

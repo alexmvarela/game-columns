@@ -15,10 +15,10 @@ function addStylesAndHTMLToBody() {
         </div>
         <div id="info">
           <div>
-            <h3>NEXT</h3>
+            <h3 id="nextTitle">NEXT</h3>
             <canvas id="nextColumn"></canvas>
           </div>
-          <div>
+          <div id="scoreContainer">
             <h3>SCORE</h3>
             <canvas id="score"></canvas>
           </div>
@@ -61,7 +61,7 @@ function addStylesAndHTMLToBody() {
         </div>
         <div id="info">
           <div>
-            <h3>NEXT</h3>
+            <h3 id="nextTitle">NEXT</h3>
             <canvas id="nextColumn"></canvas>
           </div>
           <div>
