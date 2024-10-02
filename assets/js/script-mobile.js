@@ -78,6 +78,7 @@ let level = 0;
 let isGameStarted = false;
 let isGamePaused = false;
 let isGameOver = false; 
+let isProcessingTiles = false;
 
 let comboCount = 0; 
 let comboDelay = 900; 
@@ -90,6 +91,7 @@ const rotateButton = document.getElementById("rotate");
 const startPauseButton = document.getElementById('start-pause');
 
 leftButton.addEventListener("click", () => {
+  if (isProcessingTiles) return;
   if (columnXPosition > 0 && !isGamePaused && isGameStarted) {
     columnXPosition -= TILE_SIZE;
     if (checkCollision()?.left) {
@@ -103,6 +105,7 @@ leftButton.addEventListener("click", () => {
 });
 
 rightButton.addEventListener("click", () => {
+  if (isProcessingTiles) return;
   if (columnXPosition + TILE_SIZE < canvas.width && !isGamePaused && isGameStarted) {
     columnXPosition += TILE_SIZE;
     if (checkCollision()?.right) {
@@ -116,6 +119,7 @@ rightButton.addEventListener("click", () => {
 });
 
 rotateButton.addEventListener("click", () => {
+  if (isProcessingTiles) return;
   if (isGameStarted && !isGamePaused && isGameStarted) {
     rotateColumn();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -342,6 +346,7 @@ function handleNewColumn() {
 }
 
 function processTileCombinations() {
+  isProcessingTiles = true; 
   let tilesToRemove = new Set();
   let hasCombinations = false;
 
@@ -441,6 +446,8 @@ function processTileCombinations() {
   if (hasCombinations) {
     comboCount++; 
     score += tilesToRemove.size * 10;
+    audioJewels.pause();
+    audioJewels.currentTime = 0;
     audioJewels.play();
     removeTilesAndApplyGravity(tilesToRemove);
 
@@ -467,6 +474,7 @@ function processTileCombinations() {
     }
     comboCount = 0;
     handleNewColumn();
+    isProcessingTiles = false;
   }
 }
 

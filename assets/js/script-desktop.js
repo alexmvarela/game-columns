@@ -436,6 +436,8 @@ function processTileCombinations() {
   if (hasCombinations) {
     comboCount++; 
     score += tilesToRemove.size * 10;
+    audioJewels.pause();
+    audioJewels.currentTime = 0;
     audioJewels.play();
     removeTilesAndApplyGravity(tilesToRemove);
 
