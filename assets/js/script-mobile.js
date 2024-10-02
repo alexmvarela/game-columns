@@ -472,7 +472,9 @@ function processTileCombinations() {
   } else {
     // Si no hay más combinaciones, generar una nueva columna después de una breve pausa
     if (comboCount === 0) {
-      audioDrop.play(); 
+      audioDrop.pause();
+      audioDrop.currentTime = 0;
+      audioDrop.play();  
     }
     comboCount = 0;
     handleNewColumn();
